@@ -1,8 +1,8 @@
 import {
     Form, Input, Select, Checkbox, Button, AutoComplete} from 'antd';
-
+import { connect } from 'react-redux';
 import React from "react";
-
+import * as actions from '../store/actions/auth';
 import { Icon } from 'antd';
 
 const { Option } = Select;
@@ -22,6 +22,7 @@ class HorizontalLoginForm extends React.Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
+                 this.props.onAuth(values.userName, values.password);
                 console.log('Received values of form: ', values);
             }
         });
@@ -80,5 +81,18 @@ class HorizontalLoginForm extends React.Component {
 
 const LogIn = Form.create({ name: 'horizontal_login' })(HorizontalLoginForm);
 
+const mapStateToProps = (state) => {
+  return {
+    loading: state.loading,
+    error: state.error,
+    isAuthenticated: state.token !== null
+  }
+}
 
-export default LogIn;
+const mapDispatchToProps = dispatch => {
+  return {
+    onAuth: (username, password) => dispatch(actions.authLogin(username, password))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(LogIn);
